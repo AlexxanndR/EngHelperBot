@@ -26,7 +26,7 @@ public class StartCommand : ICommandHandler
 
         return await bot.SendMessage(update.Message!.Chat, usage, parseMode: ParseMode.Html, replyMarkup: new string[][]
         {
-            ["📚 Мои словари"], ["➕ Добавить слово"], ["📝 Пройти тест"]
+            [BotCommands.MyDictionaries], [BotCommands.AddWord], [BotCommands.TakeTest]
         });
     }
 }
