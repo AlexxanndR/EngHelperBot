@@ -14,7 +14,7 @@ builder.Services.AddHttpClient("tgwebhook")
 builder.Services.AddSingleton<UpdateHandler>();
 builder.Services.AddSingleton<IChatsContext, ChatsContext>();
 builder.Services.AddSingleton<ICommandProvider, CommandProvider>();
-builder.Services.AddScoped<ICommandHandler, StartCommand>();
+builder.Services.ConfigureDatabaseConnection();
 builder.Services.ConfigureTelegramBotMvc();
 
 builder.Services.AddControllers();
