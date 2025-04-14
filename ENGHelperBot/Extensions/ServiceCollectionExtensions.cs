@@ -1,4 +1,6 @@
-﻿namespace ENGHelperBot.Extensions;
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace ENGHelperBot.Extensions;
 
 public static class ServiceCollectionExtensions
 {
@@ -26,5 +28,28 @@ public static class ServiceCollectionExtensions
             BotWebhookUrl = parsedUri,
             SecretToken = secretToken
         });
+    }
+
+    public static void ConfigureDatabaseConnection(
+        this IServiceCollection services,
+        string dbHostVar = "DB_HOST",
+        string dbPortVar = "DB_PORT",
+        string dbNameVar = "DB_NAME",
+        string dbUsernameVar = "DB_USERNAME",
+        string dbPasswordVar = "DB_PASSWORD")
+    {
+        var host = Environment.GetEnvironmentVariable(dbHostVar) ??
+            throw new NullReferenceException($"{dbHostVar} environment variable is not set.");
+        var port = Environment.GetEnvironmentVariable(dbPortVar) ??
+            throw new NullReferenceException($"{dbPortVar} environment variable is not set.");
+        var name = Environment.GetEnvironmentVariable(dbNameVar) ??
+            throw new NullReferenceException($"{dbNameVar} environment variable is not set.");
+        var username = Environment.GetEnvironmentVariable(dbUsernameVar) ??
+            throw new NullReferenceException($"{dbUsernameVar} environment variable is not set.");
+        var password = Environment.GetEnvironmentVariable(dbPasswordVar) ??
+            throw new NullReferenceException($"{dbPasswordVar} environment variable is not set.");
+
+        services.AddDbContextFactory<AppDbContext>(options =>
+            options.UseNpgsql($"User ID={username};Password={password};Host={host};Port={port};Database={name};"));
     }
 }
