@@ -13,6 +13,7 @@ builder.Services.AddHttpClient("tgwebhook")
     .AddTypedClient<ITelegramBotClient>((httpClient, sp) => new TelegramBotClient(sp.GetRequiredService<BotConfiguration>().BotToken, httpClient));
 builder.Services.AddSingleton<UpdateHandler>();
 builder.Services.AddSingleton<IChatsContext, ChatsContext>();
+builder.Services.AddScoped<ICommandHandler, StartCommand>();
 builder.Services.AddSingleton<ICommandProvider, CommandProvider>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.ConfigureDatabaseConnection();
