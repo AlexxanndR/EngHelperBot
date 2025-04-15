@@ -1,11 +1,14 @@
-﻿using Telegram.Bot;
+﻿using ENGHelperBot.Services.Repositories.Users;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
 namespace ENGHelperBot.Services.Command;
 
-public class StartCommand : ICommandHandler
+public class StartCommand(IServiceProvider serviceProvider) : ICommandHandler
 {
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
+
     public async Task<Message> HandleAsync(ITelegramBotClient bot, Update update)
     {
         const string usage = """
@@ -24,7 +27,11 @@ public class StartCommand : ICommandHandler
             <b>📝 Пройти тест</b> — проверьте, как хорошо вы запомнили слова. Бот будет задавать вопросы, а вы выбирать ответы.  
         """;
 
-        return await bot.SendMessage(update.Message!.Chat, usage, parseMode: ParseMode.Html, replyMarkup: new string[][]
+        var userRepository = _serviceProvider.GetRequiredService<IUserRepository>();
+        var newUser = new Data.Entities.User() { Id = update.Message!.Chat.Id, Username = update.Message.Chat.Username };
+        await userRepository.CreateAsync(newUser, u => u.Id == newUser.Id);
+
+        return await bot.SendMessage(update.Message.Chat, usage, parseMode: ParseMode.Html, replyMarkup: new string[][]
         {
             [BotCommands.MyDictionaries], [BotCommands.AddWord], [BotCommands.TakeTest]
         });
