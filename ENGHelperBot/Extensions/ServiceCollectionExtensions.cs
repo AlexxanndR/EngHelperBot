@@ -5,10 +5,10 @@ namespace ENGHelperBot.Extensions;
 public static class ServiceCollectionExtensions
 {
     public static void AddBotConfiguration(
-        this IServiceCollection services, 
+        this IServiceCollection services,
         string botTokenVar = "BOT_TOKEN",
         string webhookUrlVar = "WEBHOOK_URL",
-        string secretTokenVar = "SECRET_TOKEN") 
+        string secretTokenVar = "SECRET_TOKEN")
     {
         var botToken = Environment.GetEnvironmentVariable(botTokenVar)
             ?? throw new InvalidOperationException($"{botTokenVar} environment variable is not set.");
