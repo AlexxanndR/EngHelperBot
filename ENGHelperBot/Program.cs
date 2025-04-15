@@ -2,7 +2,9 @@ using ENGHelperBot;
 using ENGHelperBot.Extensions;
 using ENGHelperBot.Services;
 using ENGHelperBot.Services.Command;
+using ENGHelperBot.Services.Command.Provider;
 using ENGHelperBot.Services.Context;
+using ENGHelperBot.Services.Repositories.Users;
 using Telegram.Bot;
 
 var builder = WebApplication.CreateBuilder(args);
