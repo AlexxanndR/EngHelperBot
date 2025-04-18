@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 
 namespace ENGHelperBot.Services.Repositories;
 
-public abstract class RepositoryBase<T>(IDbContextFactory<AppDbContext> contextFactory) 
+public abstract class RepositoryBase<T>(IDbContextFactory<AppDbContext> contextFactory)
     : IRepositoryBase<T> where T : class
 {
     private readonly IDbContextFactory<AppDbContext> _contextFactory = contextFactory;
@@ -37,5 +38,16 @@ public abstract class RepositoryBase<T>(IDbContextFactory<AppDbContext> contextF
     {
         await using var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
         return await databaseContext.Set<T>().FirstOrDefaultAsync(expression, cancellationToken);
+    }
+
+    public async ValueTask<IEnumerable<T>> GetByPageAsync(int pageNumber, int pageSize = 5, CancellationToken cancellationToken = default)
+    {
+        await using var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        int skip = (pageNumber - 1) * pageSize;
+        return databaseContext.Set<T>()
+                              .Skip(skip)
+                              .Take(pageSize)
+                              .AsNoTracking()
+                              .AsEnumerable();
     }
 }
