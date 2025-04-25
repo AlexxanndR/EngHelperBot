@@ -1,19 +1,40 @@
 ﻿using ENGHelperBot.Services.Context;
+using Telegram.Bot.Types;
 
 namespace ENGHelperBot.Services.Command.Provider;
 
-public class CommandProvider(IServiceProvider serviceProvider, IChatsContext chatsContext) : ICommandProvider
+public class CommandProvider(IChatContextProvider chatContextProvider, IServiceScopeFactory scopeFactory) : ICommandProvider
 {
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
-    private readonly IChatsContext _chatsContext = chatsContext;
+    private readonly IChatContextProvider _chatContextProvider = chatContextProvider;
+    private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
 
-    public ICommandHandler Get(long chatId, string messageText)
-        => messageText switch
+    public ICommandHandler Get(long chatId, string command)
+    {
+        Func<string, ICommandHandler?> GetHandler = (string command) => command switch
         {
-            BotCommands.Start => new StartCommand(_serviceProvider),
-            BotCommands.MyDictionaries => new MyDictionariesCommand(),
-            BotCommands.AddWord => new AddWordCommand(),
-            BotCommands.TakeTest => new TakeTestCommand(),
-            _ => _chatsContext.GetFollowingCommand(chatId) ?? throw new ArgumentNullException($"{chatId} — {messageText}"),
+            BotCommands.Start => new StartCommand(_scopeFactory),
+            BotCommandTexts.MyDictionaries => new MyDictionariesCommand(_scopeFactory),
+            BotCommands.AddDictionary => new AddDictionaryCommand(_scopeFactory),
+            BotCommands.AddDictionaryClick => new AddDictionaryClickCommand(_scopeFactory),
+            BotCommands.SelectDictionary => new SelectDictionaryCommand(_scopeFactory),
+            BotCommandTexts.AddWord => new AddWordCommand(),
+            BotCommands.Next => new ForwardCommand(_scopeFactory),
+            BotCommands.Previous => new BackCommand(_scopeFactory),
+            BotCommandTexts.TakeTest => new TakeTestCommand(),
+            _ => null
         };
+
+        var handler = GetHandler(command);
+    
+        if (handler != null)
+             return handler;
+
+        var followingCommand = _chatContextProvider.GetFollowingCommand(chatId)
+            ?? throw new ArgumentException($"Chat {chatId}: command {command} not exist.");
+
+        handler = GetHandler(followingCommand) 
+            ?? throw new ArgumentException($"Chat {chatId}: command {command} not exist.");
+
+        return handler;
+    }
 }
