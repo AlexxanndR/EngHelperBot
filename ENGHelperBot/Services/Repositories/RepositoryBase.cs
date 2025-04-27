@@ -36,7 +36,7 @@ public abstract class RepositoryBase<T>(IDbContextFactory<AppDbContext> contextF
         databaseContext.Set<T>().Remove(entity);
     }
 
-    public async ValueTask<T?> FindAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken)
+    public async ValueTask<T?> FindAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
     {
         await using var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
         return await databaseContext.Set<T>().FirstOrDefaultAsync(expression, cancellationToken);
