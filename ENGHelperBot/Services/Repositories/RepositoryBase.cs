@@ -9,17 +9,19 @@ public abstract class RepositoryBase<T>(IDbContextFactory<AppDbContext> contextF
 {
     private readonly IDbContextFactory<AppDbContext> _contextFactory = contextFactory;
 
-    public async ValueTask CreateAsync(T entity, Expression<Func<T, bool>> existenceExpression, CancellationToken cancellationToken)
+    public async ValueTask<bool> CreateAsync(T entity, Expression<Func<T, bool>> existenceExpression, CancellationToken cancellationToken = default)
     {
         await using var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
         await using var transaction = await databaseContext.Database.BeginTransactionAsync(cancellationToken);
 
-        var exists = await databaseContext.Set<T>().AnyAsync(existenceExpression, cancellationToken);
-        if (exists) return;
+        if (await databaseContext.Set<T>().AnyAsync(existenceExpression, cancellationToken))
+            return false;
 
         await databaseContext.Set<T>().AddAsync(entity, cancellationToken);
         await databaseContext.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
+
+        return true;
     }
 
     public async ValueTask UpdateAsync(T entity, CancellationToken cancellationToken)
