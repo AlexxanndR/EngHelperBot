@@ -5,9 +5,9 @@ using Telegram.Bot.Types.Enums;
 
 namespace ENGHelperBot.Services.Command;
 
-public class StartCommand(IServiceProvider serviceProvider) : ICommandHandler
+public class StartCommand(IServiceScopeFactory scopeFactory) : ICommandHandler
 {
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
 
     public async Task<Message> HandleAsync(ITelegramBotClient bot, Update update)
     {
@@ -27,7 +27,9 @@ public class StartCommand(IServiceProvider serviceProvider) : ICommandHandler
             <b>📝 Пройти тест</b> — проверьте, как хорошо вы запомнили слова. Бот будет задавать вопросы, а вы выбирать ответы.  
         """;
 
-        var userRepository = _serviceProvider.GetRequiredService<IUserRepository>();
+        using var scope = _scopeFactory.CreateScope();
+        var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+
         var newUser = new Data.Entities.User() { Id = update.Message!.Chat.Id, Username = update.Message.Chat.Username };
         await userRepository.CreateAsync(newUser, u => u.Id == newUser.Id);
 
