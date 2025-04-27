@@ -33,7 +33,7 @@ public class StartCommand(IServiceProvider serviceProvider) : ICommandHandler
 
         return await bot.SendMessage(update.Message.Chat, usage, parseMode: ParseMode.Html, replyMarkup: new string[][]
         {
-            [BotCommands.MyDictionaries], [BotCommands.AddWord], [BotCommands.TakeTest]
+            [BotCommandTexts.MyDictionaries], [BotCommandTexts.AddWord], [BotCommandTexts.TakeTest]
         });
     }
 }
