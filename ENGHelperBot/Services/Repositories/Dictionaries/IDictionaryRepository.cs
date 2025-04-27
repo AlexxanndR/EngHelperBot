@@ -4,5 +4,4 @@ namespace ENGHelperBot.Services.Repositories.Dictionaries;
 
 public interface IDictionaryRepository : IRepositoryBase<Dictionary>
 {
-
 }

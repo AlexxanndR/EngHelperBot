@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 
 namespace ENGHelperBot.Services.Repositories;
 
@@ -51,9 +50,9 @@ public abstract class RepositoryBase<T>(IDbContextFactory<AppDbContext> contextF
         
         int skip = (pageNumber - 1) * pageSize;
         var data = await databaseContext.Set<T>()
-                              .Skip(skip)
-                              .Take(pageSize)
-                              .AsNoTracking()
+                                        .Skip(skip)
+                                        .Take(pageSize)
+                                        .AsNoTracking()
                                         .ToListAsync(cancellationToken);
 
         return (data, totalPages);
