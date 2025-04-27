@@ -42,14 +42,20 @@ public abstract class RepositoryBase<T>(IDbContextFactory<AppDbContext> contextF
         return await databaseContext.Set<T>().FirstOrDefaultAsync(expression, cancellationToken);
     }
 
-    public async ValueTask<IEnumerable<T>> GetByPageAsync(int pageNumber, int pageSize = 5, CancellationToken cancellationToken = default)
+    public async ValueTask<(IEnumerable<T> Data, int TotalPages)> GetByPageAsync(int pageNumber, int pageSize = 5, CancellationToken cancellationToken = default)
     {
         await using var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+         
+        int totalRecords = await databaseContext.Set<T>().CountAsync(cancellationToken);
+        int totalPages = (totalRecords + pageSize - 1) / pageSize;
+        
         int skip = (pageNumber - 1) * pageSize;
-        return databaseContext.Set<T>()
+        var data = await databaseContext.Set<T>()
                               .Skip(skip)
                               .Take(pageSize)
                               .AsNoTracking()
-                              .AsEnumerable();
+                                        .ToListAsync(cancellationToken);
+
+        return (data, totalPages);
     }
 }
