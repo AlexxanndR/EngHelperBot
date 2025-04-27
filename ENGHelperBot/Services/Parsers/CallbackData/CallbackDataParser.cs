@@ -31,10 +31,13 @@ public class CallbackDataParser : ICallbackDataParser
             "word" => PaginationData.DataType.Word,
             _ => throw new ArgumentException($"Unknown data type: {parameters[0]}")
         };
-        var pageNumber = int.TryParse(parameters[1], out var value) 
-            ? value 
-            : throw new ArgumentException($"Invalid page number: {value}");
+        var pageNumber = int.TryParse(parameters[1], out var number) 
+            ? number
+            : throw new ArgumentException($"Invalid page number: {number}");
+        var messageId = int.TryParse(parameters[2], out var id)
+            ? id
+            : throw new ArgumentException($"Invalid page number: {id}");
 
-        return new ParsedCallbackData { PaginationData = new(dataType, pageNumber) };
+        return new ParsedCallbackData { PaginationData = new(dataType, pageNumber, messageId) };
     }
 }
