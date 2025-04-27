@@ -1,4 +1,5 @@
-﻿using ENGHelperBot.Services.Context;
+﻿using ENGHelperBot.Services.Command;
+using ENGHelperBot.Services.Context;
 using ENGHelperBot.Services.Parsers.CallbackData;
 using ENGHelperBot.Services.Repositories.Dictionaries;
 using Telegram.Bot;
@@ -6,7 +7,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace ENGHelperBot.Services.Command;
+namespace ENGHelperBot.Services.Commands.Dictionaries;
 
 public class MyDictionariesCommand(IServiceScopeFactory scopeFactory) : ICommandHandler
 {
@@ -28,7 +29,7 @@ public class MyDictionariesCommand(IServiceScopeFactory scopeFactory) : ICommand
 
         using var scope = _scopeFactory.CreateScope();
         var dictionaryService = scope.ServiceProvider.GetRequiredService<IDictionaryRepository>();
-        
+
         var (data, totalPages) = await dictionaryService.GetByPageAsync(pageNumber: 1, pageSize: 5);
         var isDictionariesExist = data.Any();
 

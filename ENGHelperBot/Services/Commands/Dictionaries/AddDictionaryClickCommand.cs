@@ -1,9 +1,10 @@
-﻿using ENGHelperBot.Services.Context;
+﻿using ENGHelperBot.Services.Command;
+using ENGHelperBot.Services.Context;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace ENGHelperBot.Services.Command;
+namespace ENGHelperBot.Services.Commands.Dictionaries;
 
 public class AddDictionaryClickCommand(IServiceScopeFactory scopeFactory) : ICommandHandler
 {
