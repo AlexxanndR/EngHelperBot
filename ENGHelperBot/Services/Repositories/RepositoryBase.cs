@@ -45,9 +45,15 @@ public abstract class RepositoryBase<T>(IDbContextFactory<AppDbContext> contextF
     {
         await using var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
          
+        if (pageNumber <= 0)
+            throw new ArgumentOutOfRangeException($"Page number is less or equel to 0: {pageNumber}");
+
         int totalRecords = await databaseContext.Set<T>().CountAsync(cancellationToken);
         int totalPages = (totalRecords + pageSize - 1) / pageSize;
         
+        if (pageNumber > totalPages)
+            throw new ArgumentOutOfRangeException($"Page number is above than total pages: {pageNumber}");
+
         int skip = (pageNumber - 1) * pageSize;
         var data = await databaseContext.Set<T>()
                                         .Skip(skip)
