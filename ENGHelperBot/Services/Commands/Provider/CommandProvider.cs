@@ -1,5 +1,5 @@
 ﻿using ENGHelperBot.Services.Commands.Dictionaries;
-﻿using ENGHelperBot.Services.Context;
+using ENGHelperBot.Services.Context;
 using Telegram.Bot.Types;
 
 namespace ENGHelperBot.Services.Command.Provider;
@@ -18,6 +18,9 @@ public class CommandProvider(IChatContextProvider chatContextProvider, IServiceS
             BotCommands.AddDictionary => new AddDictionaryCommand(_scopeFactory),
             BotCommands.AddDictionaryClick => new AddDictionaryClickCommand(_scopeFactory),
             BotCommands.SelectDictionary => new SelectDictionaryCommand(_scopeFactory),
+            BotCommands.RenameDictionary => new RenameDictionaryCommand(_scopeFactory),
+            BotCommands.RenameDictionaryClick => new RenameDictionaryClickCommand(_scopeFactory),
+            BotCommands.RemoveDictionary => new RemoveDictionaryCommand(_scopeFactory),
             BotCommandTexts.AddWord => new AddWordCommand(),
             BotCommands.Next => new ForwardCommand(_scopeFactory),
             BotCommands.Previous => new BackCommand(_scopeFactory),
