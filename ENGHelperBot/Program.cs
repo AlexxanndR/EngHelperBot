@@ -7,6 +7,7 @@ using ENGHelperBot.Services.Context;
 using ENGHelperBot.Services.Parsers.CallbackData;
 using ENGHelperBot.Services.Repositories.Dictionaries;
 using ENGHelperBot.Services.Repositories.Users;
+using ENGHelperBot.Services.Repositories.Words;
 using Telegram.Bot;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,7 @@ builder.Services.AddSingleton<IChatContextProvider, ChatContextProvider>();
 builder.Services.AddScoped<ICallbackDataParser, CallbackDataParser>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IDictionaryRepository, DictionaryRepository>();
+builder.Services.AddScoped<IWordRepository, WordRepository>();
 builder.Services.ConfigureDatabaseConnection();
 builder.Services.ConfigureTelegramBotMvc();
 
