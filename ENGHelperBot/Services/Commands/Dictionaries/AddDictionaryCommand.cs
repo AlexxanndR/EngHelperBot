@@ -1,5 +1,4 @@
 ﻿using ENGHelperBot.Services.Command;
-using ENGHelperBot.Services.Context;
 using ENGHelperBot.Services.Repositories.Dictionaries;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -22,9 +21,6 @@ public class AddDictionaryCommand(IServiceScopeFactory scopeFactory) : ICommandH
         """;
 
         using var scope = _scopeFactory.CreateScope();
-
-        var chatContext = scope.ServiceProvider.GetRequiredService<IChatContextProvider>();
-        chatContext.ResetFollowingCommand(update.Message!.Chat.Id);
 
         var dictionaryService = scope.ServiceProvider.GetRequiredService<IDictionaryRepository>();
         var isSuccess = await dictionaryService.CreateAsync(new() { Name = update.Message!.Text!, UserId = update.Message.Chat.Id },

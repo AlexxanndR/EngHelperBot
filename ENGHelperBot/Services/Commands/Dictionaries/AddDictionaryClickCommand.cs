@@ -18,7 +18,7 @@ public class AddDictionaryClickCommand(IServiceScopeFactory scopeFactory) : ICom
 
         using var scope = _scopeFactory.CreateScope();
         var chatContext = scope.ServiceProvider.GetRequiredService<IChatContextProvider>();
-        chatContext.SetFollowingCommand(update.CallbackQuery!.Message!.Chat.Id, BotCommands.AddDictionary);
+        chatContext.SetFollowingContext(update.CallbackQuery!.Message!.Chat.Id, BotCommands.AddDictionary);
 
         return await bot.SendMessage(update.CallbackQuery!.Message.Chat, message, parseMode: ParseMode.Html);
     }

@@ -1,17 +1,14 @@
-﻿using ENGHelperBot.Services.Command;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 
 namespace ENGHelperBot.Services.Context;
 
 public class ChatContextProvider : IChatContextProvider
 {
-    private ConcurrentDictionary<long, string> FollowingCommands { get; } = new();
+    private ConcurrentDictionary<long, string> FollowingContext { get; } = new();
 
-    public string? GetFollowingCommand(long chatId)
-        => FollowingCommands.TryGetValue(chatId, out var command) ? command : default;
-    public void SetFollowingCommand(long chatId, string command)
-        => FollowingCommands[chatId] = command;
+    public string? GetFollowingContext(long chatId)
+        => FollowingContext.TryGetValue(chatId, out var command) ? command : default;
 
-    public void ResetFollowingCommand(long chatId)
-        => FollowingCommands.Remove(chatId, out var _);
+    public void SetFollowingContext(long chatId, string command)
+        => FollowingContext.AddOrUpdate(chatId, command, (k, v) => v);
 }

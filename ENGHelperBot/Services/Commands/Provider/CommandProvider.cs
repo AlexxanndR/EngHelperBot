@@ -30,9 +30,10 @@ public class CommandProvider(IChatContextProvider chatContextProvider, IServiceS
         if (handler != null)
              return handler;
 
-        var followingCommand = _chatContextProvider.GetFollowingCommand(chatId)
+        var followingContext = _chatContextProvider.GetFollowingContext(chatId)
             ?? throw new ArgumentException($"Chat {chatId}: command {command} not exist.");
 
+        var followingCommand = followingContext.Split(';')[0];
         handler = GetHandler(followingCommand) 
             ?? throw new ArgumentException($"Chat {chatId}: command {command} not exist.");
 
