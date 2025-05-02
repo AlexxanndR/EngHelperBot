@@ -41,6 +41,12 @@ public abstract class RepositoryBase<T>(IDbContextFactory<AppDbContext> contextF
         return await databaseContext.Set<T>().FirstOrDefaultAsync(expression, cancellationToken);
     }
 
+    public async ValueTask<bool> AnyAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
+    {
+        await using var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        return await databaseContext.Set<T>().AnyAsync(expression, cancellationToken);
+    }
+
     public async ValueTask<(IEnumerable<T> Data, int TotalPages)> GetByPageAsync(int pageNumber, int pageSize = 5, CancellationToken cancellationToken = default)
     {
         await using var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);

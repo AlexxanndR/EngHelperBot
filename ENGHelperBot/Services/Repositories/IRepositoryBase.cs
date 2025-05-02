@@ -9,5 +9,6 @@ public interface IRepositoryBase<T>
     ValueTask UpdateAsync(T entity, CancellationToken cancellationToken = default);
     ValueTask DeleteAsync(T entity, CancellationToken cancellationToken = default);
     ValueTask<T?> FindAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default);
+    ValueTask<bool> AnyAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default);
     ValueTask<(IEnumerable<T> Data, int TotalPages)> GetByPageAsync(int pageNumber, int pageSize = 5, CancellationToken cancellationToken = default);
 }
