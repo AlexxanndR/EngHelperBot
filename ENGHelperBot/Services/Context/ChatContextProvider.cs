@@ -11,4 +11,7 @@ public class ChatContextProvider : IChatContextProvider
 
     public void SetFollowingContext(long chatId, string command)
         => FollowingContext.AddOrUpdate(chatId, command, (k, v) => v);
+
+    public void ResetFollowingContext(long chatId)
+        => FollowingContext.Remove(chatId, out var _);
 }
