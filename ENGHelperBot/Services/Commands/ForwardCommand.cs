@@ -1,7 +1,6 @@
 ﻿using ENGHelperBot.Data;
 using ENGHelperBot.Data.Entities;
 using ENGHelperBot.Services.Parsers.CallbackData;
-using ENGHelperBot.Services.Repositories;
 using ENGHelperBot.Services.Repositories.Dictionaries;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -15,10 +14,12 @@ public class ForwardCommand(IServiceScopeFactory scopeFactory) : ICommandHandler
 
     public async Task<Message> HandleAsync(ITelegramBotClient bot, Update update)
     {
+        var query = update.CallbackQuery!;
+
         using var scope = _scopeFactory.CreateScope();
         var callbackDataParser = scope.ServiceProvider.GetRequiredService<ICallbackDataParser>();
 
-        var parsedData = callbackDataParser.Parse(update.CallbackQuery!.Data!);
+        var parsedData = callbackDataParser.Parse(query.Data!);
         if (parsedData.PaginationData is not { } paginationData)
             throw new ArgumentException("There are no pagination data.");
 
@@ -37,10 +38,13 @@ public class ForwardCommand(IServiceScopeFactory scopeFactory) : ICommandHandler
                 InlineKeyboardButton.WithCallbackData($"{paginationData.CurrentPage + 1}"),
                 InlineKeyboardButton.WithCallbackData(BotCommandTexts.Forward, $"{BotCommands.Next};dict;1")
             ],
-            [InlineKeyboardButton.WithCallbackData(BotCommandTexts.AddDictionary, BotCommands.AddDictionary)]
+
         };
 
-        return await bot.EditMessageReplyMarkup(update.CallbackQuery.Message!.Chat.Id, paginationData.MessageId, replyMarkup: reply);
+        var replyMarkup = query.Message!.ReplyMarkup!;
+        var fullReply = reply.Concat(replyMarkup.InlineKeyboard.Skip(reply.Length)).ToArray();
+
+        return await bot.EditMessageReplyMarkup(query.Message!.Chat, query.Message.Id, replyMarkup: fullReply);
     }
 
     private async Task<(IEnumerable<Dictionary> Data, int TotalPages)> GetDictionaryPageAsync(int page)
