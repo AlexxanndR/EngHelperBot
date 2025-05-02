@@ -1,4 +1,5 @@
 ﻿using ENGHelperBot.Services.Command;
+using ENGHelperBot.Services.Context;
 using ENGHelperBot.Services.Repositories.Dictionaries;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -20,12 +21,17 @@ public class AddDictionaryCommand(IServiceScopeFactory scopeFactory) : ICommandH
             ⚠️ <b>Такой словарь уже есть!</b>
         """;
 
+        var message = update.Message!;
+
         using var scope = _scopeFactory.CreateScope();
 
-        var dictionaryService = scope.ServiceProvider.GetRequiredService<IDictionaryRepository>();
-        var isSuccess = await dictionaryService.CreateAsync(new() { Name = update.Message!.Text!, UserId = update.Message.Chat.Id },
-                                              d => d.UserId == update.Message.Chat.Id);
+        var chatContext = scope.ServiceProvider.GetRequiredService<IChatContextProvider>();
+        chatContext.ResetFollowingContext(message.Chat.Id);
 
-        return await bot.SendMessage(update.Message.Chat, isSuccess ? dictCreatedMsg : dictExistsMsg, parseMode: ParseMode.Html);
+        var dictionaryService = scope.ServiceProvider.GetRequiredService<IDictionaryRepository>();
+        var isSuccess = await dictionaryService.CreateAsync(new() { Name = message.Text!, UserId = message.Chat.Id },
+                                                            d => d.UserId == message.Chat.Id);
+
+        return await bot.SendMessage(message.Chat, isSuccess ? dictCreatedMsg : dictExistsMsg, parseMode: ParseMode.Html);
     }
 }

@@ -31,6 +31,7 @@ public class RenameDictionaryCommand(IServiceScopeFactory scopeFactory) : IComma
         var dictionaryService = scope.ServiceProvider.GetRequiredService<IDictionaryRepository>();
 
         var context = chatContext.GetFollowingContext(message.Chat.Id);
+        chatContext.ResetFollowingContext(message.Chat.Id);
 
         var parsedData = callbackDataParser.Parse(context!);
         if (parsedData.SelectionData is not { } selectionData)
