@@ -27,12 +27,14 @@ public abstract class RepositoryBase<T>(IDbContextFactory<AppDbContext> contextF
     {
         await using var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
         databaseContext.Set<T>().Update(entity);
+        await databaseContext.SaveChangesAsync(cancellationToken);
     }
 
     public async ValueTask DeleteAsync(T entity, CancellationToken cancellationToken = default)
     {
         await using var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
         databaseContext.Set<T>().Remove(entity);
+        await databaseContext.SaveChangesAsync(cancellationToken);
     }
 
     public async ValueTask<T?> FindAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
