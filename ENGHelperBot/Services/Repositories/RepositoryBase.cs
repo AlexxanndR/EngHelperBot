@@ -61,13 +61,13 @@ public abstract class RepositoryBase<T>(IDbContextFactory<AppDbContext> contextF
     public async ValueTask<(IEnumerable<T> Data, int TotalPages)> GetByPageAsync(int pageNumber, int pageSize = 5, CancellationToken cancellationToken = default)
     {
         await using var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
-         
+
         if (pageNumber <= 0)
             throw new ArgumentOutOfRangeException($"Page number is less or equel to 0: {pageNumber}");
 
         int totalRecords = await databaseContext.Set<T>().CountAsync(cancellationToken);
         int totalPages = (totalRecords + pageSize - 1) / pageSize;
-        
+
         if (totalPages == 0)
             return (Enumerable.Empty<T>(), totalPages);
 
