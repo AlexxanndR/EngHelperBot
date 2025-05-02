@@ -15,8 +15,10 @@ public class CallbackDataParser : ICallbackDataParser
         var command = parameters[0];
         return command switch
         {
-            BotCommands.Previous or BotCommands.Next => ParsePaginationData(callbackData[1..]),
-            _ => throw new ArgumentException($"Unknown command: {command}")
+            BotCommands.Previous or BotCommands.Next => ParsePaginationData(parameters[1..]),
+            BotCommands.SelectDictionary or BotCommands.RemoveDictionary 
+            or BotCommands.RenameDictionary or BotCommands.RenameDictionaryClick => ParseSelectionData(parameters[1..]),
+            _ => throw new ArgumentException($"Unknown command: {command}.")
         };
     }
 
@@ -37,7 +39,14 @@ public class CallbackDataParser : ICallbackDataParser
         var messageId = int.TryParse(parameters[2], out var id)
             ? id
             : throw new ArgumentException($"Invalid page number: {id}");
+    private ParsedCallbackData ParseSelectionData(params string[] parameters)
+    {
+        if (parameters.Length < 1)
+            throw new ArgumentException("Invalid callback data format");
 
-        return new ParsedCallbackData { PaginationData = new(dataType, pageNumber, messageId) };
+        if (!int.TryParse(parameters[0], out var id))
+            throw new ArgumentException($"Invalid page number: {id}");
+
+        return new ParsedCallbackData { SelectionData = new(id) };
     }
 }
