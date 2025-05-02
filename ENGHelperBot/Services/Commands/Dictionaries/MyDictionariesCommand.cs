@@ -1,6 +1,4 @@
 ﻿using ENGHelperBot.Services.Command;
-using ENGHelperBot.Services.Context;
-using ENGHelperBot.Services.Parsers.CallbackData;
 using ENGHelperBot.Services.Repositories.Dictionaries;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -19,7 +17,7 @@ public class MyDictionariesCommand(IServiceScopeFactory scopeFactory) : ICommand
             <b>📖 Выберите словарь или создайте новый:</b>
         """;
 
-        const string emptyDictionariesMsg = """
+        const string noDictionariesMsg = """
             😔 <b>Ой, тут пока пусто!</b>
             Но это легко исправить — давайте создадим ваш первый словарь!  
             Просто нажмите "Добавить словарь" ниже.  
@@ -31,13 +29,13 @@ public class MyDictionariesCommand(IServiceScopeFactory scopeFactory) : ICommand
         var dictionaryService = scope.ServiceProvider.GetRequiredService<IDictionaryRepository>();
 
         var (data, totalPages) = await dictionaryService.GetByPageAsync(pageNumber: 1, pageSize: 5);
-        var isDictionariesExist = data.Any();
+        var isDictionariesExist = totalPages > 0;
 
-        var msg = isDictionariesExist ? dictionariesMsg : emptyDictionariesMsg;
+        var msg = isDictionariesExist ? dictionariesMsg : noDictionariesMsg;
         var reply = isDictionariesExist
             ? new InlineKeyboardButton[][]
             {
-                data.Select(d => InlineKeyboardButton.WithCallbackData(d.Name, BotCommands.SelectDictionary)).ToArray(),
+                data.Select(d => InlineKeyboardButton.WithCallbackData(d.Name, $"{BotCommands.SelectDictionary};{d.Id}")).ToArray(),
                 [
                     InlineKeyboardButton.WithCallbackData(BotCommandTexts.Back),
                     InlineKeyboardButton.WithCallbackData($"1/{totalPages}"),

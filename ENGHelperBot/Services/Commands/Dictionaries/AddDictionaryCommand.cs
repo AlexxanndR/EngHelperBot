@@ -24,7 +24,7 @@ public class AddDictionaryCommand(IServiceScopeFactory scopeFactory) : ICommandH
 
         var dictionaryService = scope.ServiceProvider.GetRequiredService<IDictionaryRepository>();
         var isSuccess = await dictionaryService.CreateAsync(new() { Name = update.Message!.Text!, UserId = update.Message.Chat.Id },
-                                                            d => d.UserId == update.Message.Chat.Id);
+                                              d => d.UserId == update.Message.Chat.Id);
 
         return await bot.SendMessage(update.Message.Chat, isSuccess ? dictCreatedMsg : dictExistsMsg, parseMode: ParseMode.Html);
     }
