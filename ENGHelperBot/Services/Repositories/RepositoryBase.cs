@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using System.Linq.Expressions;
 
 namespace ENGHelperBot.Services.Repositories;
@@ -33,6 +34,15 @@ public abstract class RepositoryBase<T>(IDbContextFactory<AppDbContext> contextF
     public async ValueTask DeleteAsync(T entity, CancellationToken cancellationToken = default)
     {
         await using var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        databaseContext.Set<T>().Remove(entity);
+        await databaseContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async ValueTask DeleteAsync(Expression<Func<T, bool>> searchExpression, CancellationToken cancellationToken = default)
+    {
+        await using var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        var entity = await databaseContext.Set<T>().FirstOrDefaultAsync(searchExpression, cancellationToken)
+            ?? throw new ArgumentNullException("Couldn't find the entity to delete.");
         databaseContext.Set<T>().Remove(entity);
         await databaseContext.SaveChangesAsync(cancellationToken);
     }
