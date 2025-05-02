@@ -32,11 +32,10 @@ public class BackCommand(IServiceScopeFactory scopeFactory) : ICommandHandler
             data.Select(d => InlineKeyboardButton.WithCallbackData(d.Name)).ToArray(),
             [InlineKeyboardButton.WithCallbackData(BotCommandTexts.AddDictionary, BotCommands.AddDictionary)],
             [
-                InlineKeyboardButton.WithCallbackData(BotCommandTexts.Back, $"{BotCommands.Previous};dict;1;{update.Message!.Id}"),
+                InlineKeyboardButton.WithCallbackData(BotCommandTexts.Back, $"{BotCommands.Previous};dict;1"),
                 InlineKeyboardButton.WithCallbackData($"{paginationData.CurrentPage - 1}/{totalPages}"),
-                InlineKeyboardButton.WithCallbackData(BotCommandTexts.Forward, $"{BotCommands.Next};dict;1;{update.Message!.Id}")
-            ],
-            [InlineKeyboardButton.WithCallbackData(BotCommandTexts.AddDictionary, BotCommands.AddDictionary)]
+                InlineKeyboardButton.WithCallbackData(BotCommandTexts.Forward, $"{BotCommands.Next};dict;1")
+            ]
         };
 
         return await bot.EditMessageReplyMarkup(update.CallbackQuery.Message!.Chat.Id, paginationData.MessageId, replyMarkup: reply);

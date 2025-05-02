@@ -1,5 +1,4 @@
 ﻿using ENGHelperBot.Data;
-using Telegram.Bot.Types;
 
 namespace ENGHelperBot.Services.Parsers.CallbackData;
 
@@ -10,7 +9,7 @@ public class CallbackDataParser : ICallbackDataParser
         var parameters = callbackData.Split(';', StringSplitOptions.RemoveEmptyEntries);
         
         if (parameters.Length <= 1) 
-            throw new ArgumentException("Invalid callback data format");
+            throw new ArgumentException("Invalid callback data format.");
         
         var command = parameters[0];
         return command switch
@@ -33,12 +32,12 @@ public class CallbackDataParser : ICallbackDataParser
             "word" => PaginationData.DataType.Word,
             _ => throw new ArgumentException($"Unknown data type: {parameters[0]}")
         };
-        var pageNumber = int.TryParse(parameters[1], out var number) 
-            ? number
-            : throw new ArgumentException($"Invalid page number: {number}");
-        var messageId = int.TryParse(parameters[2], out var id)
-            ? id
-            : throw new ArgumentException($"Invalid page number: {id}");
+        if (!int.TryParse(parameters[1], out var pageNumber)) 
+            throw new ArgumentException($"Invalid page number: {pageNumber}");
+
+        return new ParsedCallbackData { PaginationData = new(dataType, pageNumber) };
+    }
+
     private ParsedCallbackData ParseSelectionData(params string[] parameters)
     {
         if (parameters.Length < 1)

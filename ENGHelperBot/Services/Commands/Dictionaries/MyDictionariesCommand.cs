@@ -41,7 +41,7 @@ public class MyDictionariesCommand(IServiceScopeFactory scopeFactory) : ICommand
                 [
                     InlineKeyboardButton.WithCallbackData(BotCommandTexts.Back),
                     InlineKeyboardButton.WithCallbackData($"1/{totalPages}"),
-                    InlineKeyboardButton.WithCallbackData(BotCommandTexts.Forward, $"{BotCommands.Next};dict;1;{message.Id}")
+                    InlineKeyboardButton.WithCallbackData(BotCommandTexts.Forward, $"{BotCommands.Next};dict;1")
                 ],
                 [InlineKeyboardButton.WithCallbackData(BotCommandTexts.AddDictionary, BotCommands.AddDictionaryClick)],
             }

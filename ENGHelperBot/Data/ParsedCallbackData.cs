@@ -6,7 +6,7 @@ public record ParsedCallbackData
     public SelectionData? SelectionData { get; set; }
 }
 
-public record PaginationData(PaginationData.DataType Type, int CurrentPage, int MessageId)
+public record PaginationData(PaginationData.DataType Type, int CurrentPage)
 {
     public enum DataType { Dictionary, Word };
 }
