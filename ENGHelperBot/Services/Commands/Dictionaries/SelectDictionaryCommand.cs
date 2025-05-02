@@ -39,23 +39,24 @@ public class SelectDictionaryCommand(IServiceScopeFactory scopeFactory) : IComma
 
         var msg = isWordsExist ? dictionaryViewMsg : noWordsMsg;
         var reply = isWordsExist
-            ? new InlineKeyboardButton[][]
-            {
-                data.Select(w => InlineKeyboardButton.WithCallbackData(w.Text, $"{BotCommands.SelectWord};{w.Id}")).ToArray(),
-                [
-                    InlineKeyboardButton.WithCallbackData(BotCommandTexts.Back),
-                    InlineKeyboardButton.WithCallbackData($"1/{totalPages}"),
-                    InlineKeyboardButton.WithCallbackData(BotCommandTexts.Forward, $"{BotCommands.Next};word;1")
-                ],
-                [InlineKeyboardButton.WithCallbackData(BotCommandTexts.RenameDictionary,  $"{BotCommands.RenameDictionaryClick};{selectionData.Id}")],
-                [InlineKeyboardButton.WithCallbackData(BotCommandTexts.RemoveDictionary, $"{BotCommands.RemoveDictionary};{selectionData.Id}")]
-            }
+            ?
+            data.Select(d => new[] { InlineKeyboardButton.WithCallbackData(d.Text, $"{BotCommands.SelectDictionary};{d.Id}") })
+                .Concat(new[]
+                {
+                    new[]
+                    {
+                        InlineKeyboardButton.WithCallbackData(BotCommandTexts.Back),
+                        InlineKeyboardButton.WithCallbackData($"1/{totalPages}"),
+                        InlineKeyboardButton.WithCallbackData(BotCommandTexts.Forward, $"{BotCommands.Next};dict;1")
+                    },
+                    new[] { InlineKeyboardButton.WithCallbackData(BotCommandTexts.AddDictionary, BotCommands.AddDictionaryClick) },
+                })
             :
             [
                 [InlineKeyboardButton.WithCallbackData(BotCommandTexts.RenameDictionary, $"{BotCommands.RenameDictionaryClick};{selectionData.Id}")],
                 [InlineKeyboardButton.WithCallbackData(BotCommandTexts.RemoveDictionary, $"{BotCommands.RemoveDictionary};{selectionData.Id}")]
             ];
 
-        return await bot.SendMessage(query.Message!.Chat.Id, msg, parseMode: ParseMode.Html, replyMarkup: reply);
+        return await bot.SendMessage(query.Message!.Chat.Id, msg, parseMode: ParseMode.Html, replyMarkup: reply.ToArray());
     }
 }

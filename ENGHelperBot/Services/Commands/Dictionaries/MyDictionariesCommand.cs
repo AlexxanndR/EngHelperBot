@@ -33,21 +33,22 @@ public class MyDictionariesCommand(IServiceScopeFactory scopeFactory) : ICommand
 
         var msg = isDictionariesExist ? dictionariesMsg : noDictionariesMsg;
         var reply = isDictionariesExist
-            ? new InlineKeyboardButton[][]
-            {
-                data.Select(d => InlineKeyboardButton.WithCallbackData(d.Name, $"{BotCommands.SelectDictionary};{d.Id}")).ToArray(),
-                [
-                    InlineKeyboardButton.WithCallbackData(BotCommandTexts.Back),
-                    InlineKeyboardButton.WithCallbackData($"1/{totalPages}"),
-                    InlineKeyboardButton.WithCallbackData(BotCommandTexts.Forward, $"{BotCommands.Next};dict;1")
-                ],
-                [InlineKeyboardButton.WithCallbackData(BotCommandTexts.AddDictionary, BotCommands.AddDictionaryClick)],
-            }
+            ? data.Select(d => new[] { InlineKeyboardButton.WithCallbackData(d.Name, $"{BotCommands.SelectDictionary};{d.Id}") })
+                  .Concat(new[]
+                  {
+                      new[]
+                      {
+                          InlineKeyboardButton.WithCallbackData(BotCommandTexts.Back),
+                          InlineKeyboardButton.WithCallbackData($"1/{totalPages}"),
+                          InlineKeyboardButton.WithCallbackData(BotCommandTexts.Forward, $"{BotCommands.Next};dict;1")
+                      },
+                      new[] { InlineKeyboardButton.WithCallbackData(BotCommandTexts.AddDictionary, BotCommands.AddDictionaryClick) },
+                  })
             :
             [
                 [InlineKeyboardButton.WithCallbackData(BotCommandTexts.AddDictionary, BotCommands.AddDictionaryClick)],
             ];
 
-        return await bot.SendMessage(message.Chat, msg, parseMode: ParseMode.Html, replyMarkup: reply);
+        return await bot.SendMessage(message.Chat, msg, parseMode: ParseMode.Html, replyMarkup: reply.ToArray());
     }
 }
