@@ -2,5 +2,5 @@
 
 public interface ICommandProvider
 {
-    ICommandHandler Get(long chatId, string messageText);
+    ICommandHandler Get(long chatId, string command);
 }

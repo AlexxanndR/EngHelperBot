@@ -5,5 +5,5 @@ namespace ENGHelperBot.Services.Command;
 
 public interface ICommandHandler
 {
-    Task<Message> HandleAsync(ITelegramBotClient bot, Update update); 
+    Task<Message> HandleAsync(ITelegramBotClient bot, Update update);
 }
