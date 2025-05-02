@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using System.Linq.Expressions;
 
 namespace ENGHelperBot.Services.Repositories;
@@ -69,6 +68,9 @@ public abstract class RepositoryBase<T>(IDbContextFactory<AppDbContext> contextF
         int totalRecords = await databaseContext.Set<T>().CountAsync(cancellationToken);
         int totalPages = (totalRecords + pageSize - 1) / pageSize;
         
+        if (totalPages == 0)
+            return (Enumerable.Empty<T>(), totalPages);
+
         if (pageNumber > totalPages)
             throw new ArgumentOutOfRangeException($"Page number is above than total pages: {pageNumber}");
 
